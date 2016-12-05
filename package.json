@@ -1,0 +1,27 @@
+{
+  "name": "bostad",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "next",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mattza/bostad.git"
+  },
+  "author": "Mattias Knutsson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mattza/bostad/issues"
+  },
+  "homepage": "https://github.com/Mattza/bostad#readme",
+  "dependencies": {
+    "express": "^4.14.0"
+  },
+  "devDependencies": {
+    "next": "^1.2.3"
+  }
+}
