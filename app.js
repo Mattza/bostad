@@ -1,7 +1,7 @@
 'use strict'
 const app = require('express')();
 
-app.get('/bostad/:id?', (req, res) => {
+app.get('/api/bostad/:id?', (req, res) => {
     const id = req.params.id || 'f6f24a077a4a46c9faa778854487aa59344772bb';
     get(id, data => {
         if (data) {
