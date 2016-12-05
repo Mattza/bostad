@@ -23,7 +23,7 @@ app.get('/api/bostad/:id?', (req, res) => {
     })
     //res.send('Welcome');
 });
-app.listen(80);
+app.listen(process.env.PORT || 8080);
 
 var get = (id, cb) => {
     require('http').get({
