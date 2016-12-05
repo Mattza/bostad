@@ -1,6 +1,6 @@
 'use strict'
 const app = require('express')();
-
+app.use(express.static('public'))
 app.get('/api/bostad/:id?', (req, res) => {
     const id = req.params.id || 'f6f24a077a4a46c9faa778854487aa59344772bb';
     get(id, data => {
@@ -22,7 +22,7 @@ app.get('/api/bostad/:id?', (req, res) => {
     })
     //res.send('Welcome');
 });
-app.listen(3000);
+app.listen(80);
 
 var get = (id, cb) => {
     require('http').get({
