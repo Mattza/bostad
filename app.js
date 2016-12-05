@@ -1,5 +1,6 @@
 'use strict'
-const app = require('express')();
+const express = require('express');
+const app = express();
 app.use(express.static('public'))
 app.get('/api/bostad/:id?', (req, res) => {
     const id = req.params.id || 'f6f24a077a4a46c9faa778854487aa59344772bb';
