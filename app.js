@@ -1,21 +1,48 @@
 'use strict'
 const express = require('express');
 const app = express();
-app.use(express.static('public'))
+const db = require('./db');
+const q = require('q');
+app.use(express.static('dist'))
+app.use(require('body-parser').json());
+app.put('/api/bostad/:id',(req,res)=> {
+    db.updateRating(req.params.id,req.body.rating);
+    res.send(); 
+})
 app.get('/api/bostad/:id?', (req, res) => {
     const id = req.params.id || 'f6f24a077a4a46c9faa778854487aa59344772bb';
-    get(id, data => {
+    getHemnet(id).then(data => {
         if (data) {
-            console.log(data)
-            var mappedData = data.map(obj => {
-                return {
-                    "address": obj.address,
-                    "ongoingBidding": obj.ongoing_bidding,
-                    "imageUrl": obj.medium_image_url,
-                    "url": obj.url
-                }
+            var dfds = [];
+            data.forEach(prop => {
+                var dfd = db.getRating(prop.id);
+                dfds.push(dfd);
+                dfd.then((data) => {
+                    prop.rating = data && data.rating;
+                })
             })
-            res.send(mappedData);
+            console.log(dfds.length);
+            var resolveds = 0;
+            data.forEach(prop => {
+                db.getRating(prop.id).then((data) => {
+                    prop.rating = data && data.rating;
+                });
+            });
+
+            q.allSettled(dfds).then(() => {
+                var mappedData = data.map(obj => {
+                    return {
+                        "id": obj.id,
+                        "address": obj.address,
+                        "ongoingBidding": obj.ongoing_bidding,
+                        "imageUrl": obj.medium_image_url,
+                        "url": obj.url,
+                        "rating": obj.rating
+                    }
+                })
+                res.send(mappedData);
+            })
+
         } else {
             res.status(500);
             res.send('Ingen data');
@@ -23,9 +50,10 @@ app.get('/api/bostad/:id?', (req, res) => {
     })
     //res.send('Welcome');
 });
-app.listen(process.env.PORT || 8080);
+app.listen(process.env.PORT || 8081);
 
-var get = (id, cb) => {
+var getHemnet = (id) => {
+    var def = q.defer();
     require('http').get({
         host: 'www.hemnet.se',
         path: '/bostader/search/' + id,
@@ -39,9 +67,8 @@ var get = (id, cb) => {
         });
         response.on('end', () => {
             const json = JSON.parse(datas);
-            cb(json.properties);
-            //console.log(json.properties.length);
-            //json.properties.forEach(obj => console.log(obj.address))
+            def.resolve(json.properties);
         })
     });
+    return def.promise;
 }
